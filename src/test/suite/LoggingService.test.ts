@@ -3,11 +3,11 @@ import * as vscode from "vscode";
 
 import { LoggingService } from "../../LoggingService.js";
 
-suite("LoggingService ANSI stripping", () => {
+describe("LoggingService ANSI stripping", () => {
   let lines: string[];
   let originalCreateOutputChannel: typeof vscode.window.createOutputChannel;
 
-  setup(() => {
+  beforeEach(() => {
     lines = [];
     originalCreateOutputChannel = vscode.window.createOutputChannel;
     (vscode.window as unknown as Record<string, unknown>).createOutputChannel =
@@ -18,12 +18,12 @@ suite("LoggingService ANSI stripping", () => {
       });
   });
 
-  teardown(() => {
+  afterEach(() => {
     (vscode.window as unknown as Record<string, unknown>).createOutputChannel =
       originalCreateOutputChannel;
   });
 
-  test("strips ANSI escape codes from error output", () => {
+  it("strips ANSI escape codes from error output", () => {
     const service = new LoggingService();
     // Sample taken from https://github.com/prettier/prettier-vscode/issues/4002
     const error = new Error(
@@ -53,7 +53,7 @@ suite("LoggingService ANSI stripping", () => {
     );
   });
 
-  test("leaves plain text untouched", () => {
+  it("leaves plain text untouched", () => {
     const service = new LoggingService();
     service.setOutputLevel("DEBUG");
     service.logDebug("plain message, no escapes");
